@@ -1,5 +1,5 @@
 @ECHO OFF
 javac -d ./bin ./src/*.java
-java -cp ./bin; BoardDisplayManager
+java -cp ./bin; BoardManager
 pause
 del /q bin
