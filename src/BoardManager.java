@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class BoardManager {
     public static Board currentBoard;
-    public static final String NO_MOVES_POSSIBLE_RESULT = "NO_MOVES_POSSIBLE";
+    public static final String NO_MOVE_POSSIBLE_RESULT = "NO_MOVE_POSSIBLE";
 
     public static void readBoardFromFile(String boardFilePath) {
         try {
@@ -152,7 +152,7 @@ public class BoardManager {
             }
             return possibleMoves;
         } else {
-            return NO_MOVES_POSSIBLE_RESULT;
+            return NO_MOVE_POSSIBLE_RESULT;
         }
     }
 
@@ -196,9 +196,33 @@ public class BoardManager {
         }
     }
 
+    public static Boolean hasCellState(short rowIndex, short columnIndex, Cell.CellState state) {
+        if (areIndexesCorrect(rowIndex, columnIndex) && currentBoard.boardCells[rowIndex][columnIndex].state == state) {
+            return true;
+        }
+        
+        return false;
+    }
+
     // Return true if exactly one taking is possible in a single move
-    public static Boolean isSingleTakingPossible() {
-        // ...
+    public static Boolean isSingleTakingPossible(short rowIndex, short columnIndex) {
+        Cell.CellState cellState;
+        if (currentBoard.isWhiteToMove) {
+            cellState = Cell.CellState.BLACK;
+        } else {
+            cellState = Cell.CellState.WHITE;
+        }
+
+        if (hasCellState((short) (rowIndex + 1), (short) (columnIndex + 1), cellState) && isGoalCellEmpty((short) (rowIndex + 2), (short) (columnIndex + 2))) {
+            return true;
+        } else if (hasCellState((short) (rowIndex - 1), (short) (columnIndex + 1), cellState) && isGoalCellEmpty((short) (rowIndex - 2), (short) (columnIndex + 2))) {
+            return true;
+        } else if (hasCellState((short) (rowIndex - 1), (short) (columnIndex - 1), cellState) && isGoalCellEmpty((short) (rowIndex - 2), (short) (columnIndex - 2))) {
+            return true;
+        } else if (hasCellState((short) (rowIndex + 1), (short) (columnIndex - 1), cellState) && isGoalCellEmpty((short) (rowIndex + 2), (short) (columnIndex - 2))) {
+            return true;
+        }
+
         return false;
     }
 
@@ -215,6 +239,7 @@ public class BoardManager {
         // debugCurrentBoard();
         displayCurrentBoard();
 
-        System.out.println("Moves possible from field [2][2]: " + findPossibleMoves((short) 2,(short) 2));
+        // System.out.println("Moves possible from field [2][2]: " + findPossibleMoves((short) 2,(short) 2));
+        System.out.println("isSingleTakingPossible [0][2]: " + isSingleTakingPossible((short) 0,(short) 2));
     }
 }
