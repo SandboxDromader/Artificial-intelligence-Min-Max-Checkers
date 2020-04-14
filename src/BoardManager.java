@@ -1,6 +1,5 @@
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.io.IOException;
 import java.util.Scanner;
@@ -228,7 +227,6 @@ public class BoardManager {
 
     // Return true if more than one taking is possible in a single move
     public static Boolean areManyTakingsPossible() {
-        // ...
         return false;
     }
 
@@ -236,10 +234,9 @@ public class BoardManager {
         System.out.println("Inside BoardManager: a main class responsible for results display");
 
         readBoardFromFile("./res/board.txt");
-        // debugCurrentBoard();
         displayCurrentBoard();
 
-        // System.out.println("Moves possible from field [2][2]: " + findPossibleMoves((short) 2,(short) 2));
-        System.out.println("isSingleTakingPossible [0][2]: " + isSingleTakingPossible((short) 0,(short) 2));
+        DiscountedPawnsValuationManager discountedPawnsValuationManager = new DiscountedPawnsValuationManager();
+        System.out.println("positionValuationManager.valuatePosition(board) == " + discountedPawnsValuationManager.valuatePosition(currentBoard));
     }
 }
