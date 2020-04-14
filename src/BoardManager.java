@@ -230,13 +230,24 @@ public class BoardManager {
         return false;
     }
 
+    public static int getNumberOfPossibleMoves(Boolean isWhiteToMove) {
+        if (isWhiteToMove) {
+            return 5;
+        } else {
+            return -5;
+        }
+    }
+
     public static void main(String[] args) {
         System.out.println("Inside BoardManager: a main class responsible for results display");
 
         readBoardFromFile("./res/board.txt");
         displayCurrentBoard();
 
-        DiscountedPawnsValuationManager discountedPawnsValuationManager = new DiscountedPawnsValuationManager();
-        System.out.println("positionValuationManager.valuatePosition(board) == " + discountedPawnsValuationManager.valuatePosition(currentBoard));
+        // DiscountedPawnsValuationManager discountedPawnsValuationManager = new DiscountedPawnsValuationManager();
+        // System.out.println("positionValuationManager.valuatePosition(board) == " + discountedPawnsValuationManager.valuatePosition(currentBoard));
+
+        LimitingOpponentMovesValuationManager limitingOppMovesValuationManager = new LimitingOpponentMovesValuationManager();
+        System.out.println("limitingOppMovesValuationManager.valuatePosition(board) == " + limitingOppMovesValuationManager.valuatePosition(currentBoard));
     }
 }
