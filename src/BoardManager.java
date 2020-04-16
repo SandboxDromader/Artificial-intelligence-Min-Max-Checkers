@@ -4,7 +4,7 @@ import java.nio.file.Paths;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.ArrayList;
-import java.util.HashMap;
+// import java.util.HashMap;
 
 public class BoardManager {
     public static Board currentBoard;
@@ -67,7 +67,6 @@ public class BoardManager {
     }
 
     public static void displayCurrentBoard() {
-        System.out.println("currentBorad.isWhiteToMove == " + currentBoard.isWhiteToMove);
         System.out.println("currentBorad.promotedWhitePieces == " + currentBoard.promotedWhitePieces);
         System.out.println("currentBorad.promotedBlackPieces == " + currentBoard.promotedBlackPieces);
 
@@ -78,6 +77,21 @@ public class BoardManager {
                 } else if (currentBoard.boardCells[j][i].state == Cell.CellState.BLACK) {
                     System.out.print('B');
                 } else if (currentBoard.boardCells[j][i].state == Cell.CellState.WHITE) {
+                    System.out.print('W');
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    public static void displayBoard(Cell[][] boardCells) {
+        for (short i=7;i>=0;i--) {
+            for (short j=0;j<8;j++) {
+                if (boardCells[j][i].state == Cell.CellState.EMPTY) {
+                    System.out.print('_');
+                } else if (boardCells[j][i].state == Cell.CellState.BLACK) {
+                    System.out.print('B');
+                } else if (boardCells[j][i].state == Cell.CellState.WHITE) {
                     System.out.print('W');
                 }
             }
@@ -226,6 +240,30 @@ public class BoardManager {
         return false;
     }
 
+    public static void makeMove(Cell[][] boardCells, MoveOption moveOption) {
+        if (moveOption.intermediateTakings == null || moveOption.intermediateTakings.length == 0) {
+            boardCells[moveOption.endPosition.yIndex][moveOption.endPosition.xIndex].state = boardCells[moveOption.startPosition.yIndex][moveOption.startPosition.xIndex].state;
+            boardCells[moveOption.startPosition.yIndex][moveOption.startPosition.xIndex].state = Cell.CellState.EMPTY;
+        }
+    }
+
+    public static Cell[][] returnDuplicateAfterMove(Cell[][] boardCells, MoveOption moveOption) {
+        Cell[][] boardCellsAfterMove = new Cell[8][8];
+
+        for(short i=0;i<8;i++) {
+            for(short j=0;j<8;j++) {
+                boardCellsAfterMove[i][j] = new Cell(boardCells[i][j].state);
+            }
+        }
+
+        if (moveOption.intermediateTakings == null || moveOption.intermediateTakings.length == 0) {
+            boardCellsAfterMove[moveOption.endPosition.yIndex][moveOption.endPosition.xIndex].state = boardCellsAfterMove[moveOption.startPosition.yIndex][moveOption.startPosition.xIndex].state;
+            boardCellsAfterMove[moveOption.startPosition.yIndex][moveOption.startPosition.xIndex].state = Cell.CellState.EMPTY;
+        }
+
+        return boardCellsAfterMove;
+    }
+
     // public static ArrayList<MoveOption> getAllPossibleSingleTakings(short rowIndex, short columnIndex) {
     //     ArrayList<MoveOption> moveOptionsArrayList = new ArrayList<MoveOption>();
 
@@ -335,7 +373,7 @@ public class BoardManager {
         System.out.println("Inside BoardManager: a main class responsible for results display");
 
         readBoardFromFile("./res/board.txt");
-        displayCurrentBoard();
+        // displayCurrentBoard();
 
         // DiscountedPawnsValuationManager discountedPawnsValuationManager = new DiscountedPawnsValuationManager();
         // System.out.println("positionValuationManager.valuatePosition(board) == " + discountedPawnsValuationManager.valuatePosition(currentBoard));
@@ -345,9 +383,32 @@ public class BoardManager {
 
         // System.out.println("isSingleTakingPossible(3,3) == " + isSingleTakingPossible((short) 3,(short) 3));
 
-        System.out.println("Moves display:");
-        for (MoveOption moveOption : getAllPossibleSingleTakings(currentBoard.boardCells, new CellPosition((short) 3, (short) 3), currentBoard.isWhiteToMove)) {
-            moveOption.displayMove();
-        }
+        CellPosition startPosition = new CellPosition((short) 0, (short) 0);
+        CellPosition endPosition = new CellPosition((short) 1, (short) 1);
+
+        Cell[][] boardCellsAfterMove = new Cell[8][8];
+
+        // for(short i=0;i<8;i++) {
+        //     for(short j=0;j<8;j++) {
+        //         boardCellsAfterMove[i][j] = new Cell(currentBoard.boardCells[i][j].state);
+        //     }
+        // }
+
+        // displayCurrentBoard();
+        MoveOption moveOption = new MoveOption(startPosition, endPosition);
+        displayBoard(currentBoard.boardCells);
+        System.out.println();
+        boardCellsAfterMove = returnDuplicateAfterMove(currentBoard.boardCells, moveOption);
+        displayBoard(boardCellsAfterMove);
+        // Cell[][] boardCellsAfterMove =
+        // 
+        // makeMove(currentBoard.boardCells, moveOption);
+        // displayBoard(boardCellsAfterMove);
+        displayCurrentBoard();
+
+        // System.out.println("Moves display:");
+        // for (MoveOption moveOption : getAllPossibleSingleTakings(currentBoard.boardCells, new CellPosition((short) 3, (short) 3), currentBoard.isWhiteToMove)) {
+        //     moveOption.displayMove();
+        // }
     }
 }
