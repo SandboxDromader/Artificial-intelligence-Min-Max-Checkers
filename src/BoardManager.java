@@ -4,7 +4,6 @@ import java.nio.file.Paths;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.ArrayList;
-// import java.util.HashMap;
 
 public class BoardManager {
     public static Board currentBoard;
@@ -63,10 +62,10 @@ public class BoardManager {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        
     }
 
     public static void displayCurrentBoard() {
+        System.out.println("======== currentBorad.promotedWhitePieces ========");
         System.out.println("currentBorad.promotedWhitePieces == " + currentBoard.promotedWhitePieces);
         System.out.println("currentBorad.promotedBlackPieces == " + currentBoard.promotedBlackPieces);
 
@@ -82,6 +81,7 @@ public class BoardManager {
             }
             System.out.println();
         }
+        System.out.println("==================================================");
     }
 
     public static void displayBoard(Cell[][] boardCells) {
@@ -135,6 +135,44 @@ public class BoardManager {
         return possibleMovesArrayList;
     }
 
+        // Return all not taking a piece moves possible for a piece as a String with moves separated by commas
+        // public static MoveOption[] findPossibleMoves(Cell[][] boardCells, CellPosition cellPosition) {
+        
+        // // short rowIndex, short columnIndex) {
+        //     //
+
+        //     if (isMovePossible(rowIndex, columnIndex)) {
+        //         String possibleMoves = "";
+    
+        //         if (currentBoard.isWhiteToMove) {
+        //             if (isGoalCellEmpty((short) (rowIndex - 1), (short) (columnIndex + 1)) && currentBoard.boardCells[rowIndex][columnIndex].state == Cell.CellState.WHITE) {
+        //                 possibleMoves += "[" + rowIndex + "][" + columnIndex + "]=>[" + (rowIndex - 1) + "][" + (columnIndex + 1) + "]";
+        //             }
+        
+        //             if (isGoalCellEmpty((short) (rowIndex + 1), (short) (columnIndex + 1)) && currentBoard.boardCells[rowIndex][columnIndex].state == Cell.CellState.WHITE) {
+        //                 if (!possibleMoves.equals("")) {
+        //                     possibleMoves += ",";
+        //                 } 
+        //                 possibleMoves += "[" + rowIndex + "][" + columnIndex + "]=>[" + (rowIndex + 1) + "][" + (columnIndex + 1) + "]";
+        //             }
+        //         } else {
+        //             if (isGoalCellEmpty((short) (rowIndex - 1), (short) (columnIndex - 1)) && currentBoard.boardCells[rowIndex][columnIndex].state == Cell.CellState.BLACK) {
+        //                 possibleMoves += "[" + rowIndex + "][" + columnIndex + "]=>[" + (rowIndex - 1) + "][" + (columnIndex - 1) + "]";
+        //             }
+    
+        //             if (isGoalCellEmpty((short) (rowIndex + 1), (short) (columnIndex - 1)) && currentBoard.boardCells[rowIndex][columnIndex].state == Cell.CellState.BLACK) {
+        //                 if (!possibleMoves.equals("")) {
+        //                     possibleMoves += ",";
+        //                 } 
+        //                 possibleMoves += "[" + rowIndex + "][" + columnIndex + "]=>[" + (rowIndex + 1) + "][" + (columnIndex - 1) + "]";
+        //             }
+        //         }
+        //         return possibleMoves;
+        //     } else {
+        //         return NO_MOVE_POSSIBLE_RESULT;
+        //     }
+        // }
+
     // Return all not taking a piece moves possible for a piece as a String with moves separated by commas
     // public static String findPossibleMoves(short rowIndex, short columnIndex) {
 
@@ -170,29 +208,30 @@ public class BoardManager {
     //     }
     // }
 
-    // Return true if any not taking a piece move is possible for a piece standing on cell [rowIndex][columnIndex]
-    // public static Boolean isMovePossible(short rowIndex, short columnIndex) {
-    //     if (currentBoard.isWhiteToMove && currentBoard.boardCells[rowIndex][columnIndex].state == Cell.CellState.WHITE) {
-    //         if (isGoalCellEmpty((short) (rowIndex + 1),(short) (columnIndex - 1))) {
-    //             return true;
-    //         } else if (isGoalCellEmpty((short) (rowIndex + 1), (short) (columnIndex + 1))) {
-    //             return true;
-    //         } else {
-    //             return false;
-    //         }
-    //     } else if(!currentBoard.isWhiteToMove && currentBoard.boardCells[rowIndex][columnIndex].state == Cell.CellState.BLACK) {
-    //         // if black to move
-    //         if (isGoalCellEmpty((short) (rowIndex - 1), (short) (columnIndex - 1))) {
-    //             return true;
-    //         } else if (isGoalCellEmpty((short) (rowIndex - 1), (short) (columnIndex + 1))) {
-    //             return true;
-    //         } else {
-    //             return false;
-    //         }
-    //     } else {
-    //         return false;
-    //     }
-    // }
+    // Return true if any not taking a piece move is possible for a piece standing on current cell [rowIndex][columnIndex]
+    public static Boolean isMovePossible(Cell[][] boardCells, CellPosition cellPosition, Boolean isWhiteToMove) {
+        // if white to move
+        if (isWhiteToMove && boardCells[cellPosition.yIndex][cellPosition.xIndex].state == Cell.CellState.WHITE) {
+            if (isGoalCellEmpty(boardCells, new CellPosition((short) (cellPosition.yIndex + 1),(short) (cellPosition.xIndex - 1)))) {
+                return true;
+            } else if (isGoalCellEmpty(boardCells, new CellPosition((short) (cellPosition.yIndex + 1),(short) (cellPosition.xIndex + 1)))) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if(!isWhiteToMove && boardCells[cellPosition.yIndex][cellPosition.xIndex].state == Cell.CellState.BLACK) {
+            // if black to move
+            if (isGoalCellEmpty(boardCells, new CellPosition((short) (cellPosition.yIndex - 1),(short) (cellPosition.xIndex - 1)))) {
+                return true;
+            } else if (isGoalCellEmpty(boardCells, new CellPosition((short) (cellPosition.yIndex - 1),(short) (cellPosition.xIndex + 1)))) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 
     public static Boolean areIndexesCorrect(short rowIndex, short columnIndex) {
         if (rowIndex >= 0 && rowIndex < 8 && columnIndex >= 0 && columnIndex < 8) {
@@ -219,7 +258,7 @@ public class BoardManager {
     }
 
     // Return true if exactly one taking is possible in a single move
-    public static Boolean isSingleTakingPossible(Cell[][] boardCells, Boolean isWhiteToMove, CellPosition cellPosition) {
+    public static Boolean isSingleTakingPossible(Cell[][] boardCells, CellPosition cellPosition, Boolean isWhiteToMove) {
         Cell.CellState cellState;
         if (isWhiteToMove) {
             cellState = Cell.CellState.BLACK;
@@ -264,8 +303,58 @@ public class BoardManager {
         return boardCellsAfterMove;
     }
 
-    // public static ArrayList<MoveOption> getAllPossibleSingleTakings(short rowIndex, short columnIndex) {
+    // this method returns all possible takings for selected side
+    public static ArrayList<MoveOption> getAllPossibleSingleTakings(Cell[][] boardCells, Boolean isWhiteToMove) {
+        ArrayList<MoveOption> moveOptionsList = new ArrayList<MoveOption>();
+        ArrayList<MoveOption> tmpMoveOptionsList;
+        for (short i=0;i<8;i++) {
+            for (short j=0;j<8;j++) {
+                //ArrayList<MoveOption> getAllPossibleSingleTakings(Cell[][] boardCells, CellPosition cellPosition, Boolean isWhiteBoolean)
+                tmpMoveOptionsList = getAllPossibleSingleTakings(boardCells, new CellPosition(i,j), isWhiteToMove);
+                if (tmpMoveOptionsList != null) {
+                    moveOptionsList.addAll(tmpMoveOptionsList);
+                }
+                // isSingleTakingPossible(boardCells, new CellPosition(i,j), isWhiteToMove);
+            }
+        }
+        // ArrayList<MoveOption> moveOptionsArrayList = new ArrayList<MoveOption>();
+
+        // Cell.CellState cellState;
+        // if (boardCells[currentPosition.yIndex][currentPosition.xIndex].state == Cell.CellState.BLACK) {
+        //     cellState = Cell.CellState.BLACK;
+        // } else if (boardCells[currentPosition.yIndex][currentPosition.xIndex].state == Cell.CellState.WHITE) {
+        //     cellState = Cell.CellState.WHITE;
+        // } else {
+        //     // no moves are possible, there is no piece in currentPosition ==> return null
+        //     return null;
+        // }
+
+        return moveOptionsList;
+    }
+
+
+    //     if (hasCellState((short) (rowIndex + 1), (short) (columnIndex + 1), cellState) && isGoalCellEmpty((short) (rowIndex + 2), (short) (columnIndex + 2))) {
+    //         moveOptionsArrayList.add(new MoveOption(new CellPosition(rowIndex, columnIndex), new CellPosition((short) (rowIndex + 2), (short) (columnIndex + 2))));
+    //     }
+
+    //     if (hasCellState((short) (rowIndex - 1), (short) (columnIndex + 1), cellState) && isGoalCellEmpty((short) (rowIndex - 2), (short) (columnIndex + 2))) {
+    //         moveOptionsArrayList.add(new MoveOption(new CellPosition(rowIndex, columnIndex), new CellPosition((short) (rowIndex - 2), (short) (columnIndex + 2))));
+    //     }
+
+    //     if (hasCellState((short) (rowIndex - 1), (short) (columnIndex - 1), cellState) && isGoalCellEmpty((short) (rowIndex - 2), (short) (columnIndex - 2))) {
+    //         moveOptionsArrayList.add(new MoveOption(new CellPosition(rowIndex, columnIndex), new CellPosition((short) (rowIndex - 2), (short) (columnIndex - 2))));
+    //     }
+
+    //     if (hasCellState((short) (rowIndex + 1), (short) (columnIndex - 1), cellState) && isGoalCellEmpty((short) (rowIndex + 2), (short) (columnIndex - 2))) {
+    //         moveOptionsArrayList.add(new MoveOption(new CellPosition(rowIndex, columnIndex), new CellPosition((short) (rowIndex + 2), (short) (columnIndex - 2))));
+    //     }
+
+    //     return moveOptionsArrayList;
+    // }
+
+    // public static ArrayList<MoveOption> getSinglePossibleSingleTakings(Cell[][] boardCells, CellPosition cellPosition, Boolean isWhiteToMove) {
     //     ArrayList<MoveOption> moveOptionsArrayList = new ArrayList<MoveOption>();
+
 
     //     Cell.CellState cellState;
     //     if (currentBoard.isWhiteToMove) {
@@ -293,34 +382,71 @@ public class BoardManager {
     //     return moveOptionsArrayList;
     // }
 
-    public static ArrayList<MoveOption> getAllPossibleSingleTakings(Cell[][] boardCells, CellPosition cellPosition, Boolean isWhiteBoolean) {
-        ArrayList<MoveOption> moveOptionsArrayList = new ArrayList<MoveOption>();
+    public static ArrayList<MoveOption> getAllPossibleSingleTakings(Cell[][] boardCells, CellPosition cellPosition, Boolean isWhiteToMove) {
+        Cell.CellState cellState = boardCells[cellPosition.yIndex][cellPosition.xIndex].state;
+        // System.out.println("in getAllPossibleSingleTakings method");
+        // System.out.println("cellState = " + cellState);
+        // System.out.println("isWhiteToMove = " + isWhiteToMove);
 
-        Cell.CellState cellState;
-        if (isWhiteBoolean) {
-            cellState = Cell.CellState.BLACK;
-        } else {
-            cellState = Cell.CellState.WHITE;
+        if ((cellState == Cell.CellState.EMPTY) || (isWhiteToMove && cellState == Cell.CellState.BLACK) || (!isWhiteToMove && cellState == Cell.CellState.WHITE)) {
+            return null;
         }
 
-        if (hasCellState(boardCells, new CellPosition((short) (cellPosition.yIndex + 1), (short) (cellPosition.xIndex +1)), cellState) && isGoalCellEmpty(boardCells, new CellPosition((short) (cellPosition.yIndex + 2), (short) (cellPosition.xIndex + 2)))) {
+        Cell.CellState oppositeSideCellState;
+        if (isWhiteToMove) {
+            oppositeSideCellState = Cell.CellState.BLACK;
+        } else {
+            oppositeSideCellState = Cell.CellState.WHITE;
+        }
+
+        // if (isWhiteToMove) {
+
+        // }
+
+        ArrayList<MoveOption> moveOptionsArrayList = new ArrayList<MoveOption>();
+
+        // Cell.CellState cellState;
+        // if (isWhiteToMove) {
+        //     cellState = Cell.CellState.BLACK;
+        // } else {
+        //     cellState = Cell.CellState.WHITE;
+        // }
+
+        if (hasCellState(boardCells, new CellPosition((short) (cellPosition.yIndex + 1), (short) (cellPosition.xIndex +1)), oppositeSideCellState) && isGoalCellEmpty(boardCells, new CellPosition((short) (cellPosition.yIndex + 2), (short) (cellPosition.xIndex + 2)))) {
+// System.out.println("in IF 1");
             moveOptionsArrayList.add(new MoveOption(cellPosition, new CellPosition((short) (cellPosition.yIndex + 2), (short) (cellPosition.xIndex + 2))));
         }
 
-        if (hasCellState(boardCells, new CellPosition((short) (cellPosition.yIndex - 1), (short) (cellPosition.xIndex + 1)), cellState) && isGoalCellEmpty(boardCells, new CellPosition((short) (cellPosition.yIndex - 2), (short) (cellPosition.xIndex + 2)))) {
+        if (hasCellState(boardCells, new CellPosition((short) (cellPosition.yIndex - 1), (short) (cellPosition.xIndex + 1)), oppositeSideCellState) && isGoalCellEmpty(boardCells, new CellPosition((short) (cellPosition.yIndex - 2), (short) (cellPosition.xIndex + 2)))) {
+// System.out.println("in IF 2");
             moveOptionsArrayList.add(new MoveOption(cellPosition, new CellPosition((short) (cellPosition.yIndex - 2), (short) (cellPosition.xIndex + 2))));
         }
 
-        if (hasCellState(boardCells, new CellPosition((short) (cellPosition.yIndex - 1), (short) (cellPosition.xIndex - 1)), cellState) && isGoalCellEmpty(boardCells, new CellPosition((short) (cellPosition.yIndex - 2), (short) (cellPosition.xIndex - 2)))) {
+        if (hasCellState(boardCells, new CellPosition((short) (cellPosition.yIndex - 1), (short) (cellPosition.xIndex - 1)), oppositeSideCellState) && isGoalCellEmpty(boardCells, new CellPosition((short) (cellPosition.yIndex - 2), (short) (cellPosition.xIndex - 2)))) {
+// System.out.println("in IF 3");
             moveOptionsArrayList.add(new MoveOption(cellPosition, new CellPosition((short) (cellPosition.yIndex - 2), (short) (cellPosition.xIndex - 2))));
         }
 
-        if (hasCellState(boardCells, new CellPosition((short) (cellPosition.yIndex + 1), (short) (cellPosition.xIndex - 1)), cellState) && isGoalCellEmpty(boardCells, new CellPosition((short) (cellPosition.yIndex + 2), (short) (cellPosition.xIndex - 2)))) {
+        if (hasCellState(boardCells, new CellPosition((short) (cellPosition.yIndex + 1), (short) (cellPosition.xIndex - 1)), oppositeSideCellState) && isGoalCellEmpty(boardCells, new CellPosition((short) (cellPosition.yIndex + 2), (short) (cellPosition.xIndex - 2)))) {
+// System.out.println("in IF 4");
             moveOptionsArrayList.add(new MoveOption(cellPosition, new CellPosition((short) (cellPosition.yIndex + 2), (short) (cellPosition.xIndex - 2))));
         }
 
+// for (MoveOption mo : moveOptionsArrayList) {
+//     mo.displayMove();
+// }
+
         return moveOptionsArrayList;
     }
+
+    // public String checkTakingMoves(CellPosition currentCellPosition, Boolean isWhiteToMove) {
+    //     Cell.CellState cellState;
+    //     if (isWhiteToMove) {
+    //         cellState = Cell.CellState.BLACK;
+    //     } else {
+    //         cellState = Cell.CellState.WHITE;
+    //     }
+    // }
 
     // public String checkTakingMoves(CellPosition previousCellPosition, Boolean isWhiteToMove) {
     //     Cell.CellState cellState;
@@ -329,8 +455,7 @@ public class BoardManager {
     //     } else {
     //         cellState = Cell.CellState.WHITE;
     //     }
-
-
+//=========
 
         // if (hasCellState((short) (rowIndex + 1), (short) (columnIndex + 1), cellState) && isGoalCellEmpty((short) (rowIndex + 2), (short) (columnIndex + 2))) {
             // previous state ==> BOTTOM_LEFT
@@ -395,20 +520,30 @@ public class BoardManager {
         // }
 
         // displayCurrentBoard();
-        MoveOption moveOption = new MoveOption(startPosition, endPosition);
-        displayBoard(currentBoard.boardCells);
-        System.out.println();
-        boardCellsAfterMove = returnDuplicateAfterMove(currentBoard.boardCells, moveOption);
-        displayBoard(boardCellsAfterMove);
-        // Cell[][] boardCellsAfterMove =
-        // 
-        // makeMove(currentBoard.boardCells, moveOption);
+        // MoveOption moveOption = new MoveOption(startPosition, endPosition);
+        // displayBoard(currentBoard.boardCells);
+        // System.out.println();
+        // boardCellsAfterMove = returnDuplicateAfterMove(currentBoard.boardCells, moveOption);
         // displayBoard(boardCellsAfterMove);
-        displayCurrentBoard();
+// Cell[][] boardCellsAfterMove =
+// 
+// makeMove(currentBoard.boardCells, moveOption);
+// displayBoard(boardCellsAfterMove);
+        // displayCurrentBoard();
 
-        // System.out.println("Moves display:");
-        // for (MoveOption moveOption : getAllPossibleSingleTakings(currentBoard.boardCells, new CellPosition((short) 3, (short) 3), currentBoard.isWhiteToMove)) {
-        //     moveOption.displayMove();
-        // }
+// System.out.println("Moves display:");
+// for (MoveOption moveOption : getAllPossibleSingleTakings(currentBoard.boardCells, new CellPosition((short) 3, (short) 3), currentBoard.isWhiteToMove)) {
+//     moveOption.displayMove();
+// }
+// ArrayList<MoveOption> getAllPossibleSingleTakings(Cell[][] boardCells, Boolean isWhiteToMove)
+        
+    // System.out.println("getAllPossibleSingleTakings = " + getAllPossibleSingleTakings(currentBoard.boardCells, currentBoard.isWhiteToMove));
+    
+        System.out.println("getAllPossibleSingleTakings:");
+
+        // getAllPossibleSingleTakings(currentBoard.boardCells, new CellPosition((short) 3, (short) 3), currentBoard.isWhiteToMove);
+        for (MoveOption mo : getAllPossibleSingleTakings(currentBoard.boardCells, currentBoard.isWhiteToMove)) {
+            mo.displayMove();
+        }
     }
 }
