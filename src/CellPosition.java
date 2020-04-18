@@ -1,8 +1,7 @@
 public class CellPosition {
     public short xIndex;
     public short yIndex;
-
-    // Overriding equals() to compare two Complex objects 
+ 
     @Override
     public boolean equals(Object o) {
         if (o == this) {

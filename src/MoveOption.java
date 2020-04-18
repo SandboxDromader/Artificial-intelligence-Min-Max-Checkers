@@ -1,14 +1,9 @@
-public class MoveOption {
-    // enum PreviousState {
-    //     TOP_RIGHT,
-    //     BOTTOM_RIGHT,
-    //     BOTTOM_LEFT,
-    //     TOP_LEFT
-    // }
+import java.util.ArrayList;
 
+public class MoveOption {
     public CellPosition startPosition;
     public CellPosition endPosition;
-    public CellPosition[] intermediateTakings;
+    public ArrayList<CellPosition> intermediateTakingsArrayList;
 
     public MoveOption() {}
 
@@ -17,10 +12,27 @@ public class MoveOption {
         this.endPosition = endPosition;
     }
 
-    public MoveOption(CellPosition startPosition, CellPosition endPosition, CellPosition[] intermediateTakings) {
+    public MoveOption(CellPosition startPosition, CellPosition endPosition, ArrayList<CellPosition> intermediateTakingsArrayList) {
         this.startPosition = startPosition;
         this.endPosition = endPosition;
-        this.intermediateTakings = intermediateTakings;
+        this.intermediateTakingsArrayList = intermediateTakingsArrayList;
+    }
+
+    public MoveOption(MoveOption toBeExtended, MoveOption toBeAdded) {
+        startPosition = toBeExtended.startPosition;
+        intermediateTakingsArrayList = new ArrayList<CellPosition>();
+
+        if (toBeExtended.intermediateTakingsArrayList != null && toBeExtended.intermediateTakingsArrayList.size() > 0) {
+            intermediateTakingsArrayList.addAll(toBeExtended.intermediateTakingsArrayList);
+        }
+
+        if (toBeExtended.endPosition == toBeAdded.startPosition) {
+            intermediateTakingsArrayList.add(toBeExtended.endPosition);
+            if (toBeAdded.intermediateTakingsArrayList != null) {
+                intermediateTakingsArrayList.addAll(toBeAdded.intermediateTakingsArrayList);
+            }
+            endPosition = toBeAdded.endPosition;
+        }
     }
 
     public String displayCoordinates(CellPosition position) {
@@ -30,8 +42,8 @@ public class MoveOption {
     public String getMove() {
         String fullMove = displayCoordinates(startPosition) + "=>";
 
-        if (intermediateTakings != null) {
-            for (CellPosition pos : intermediateTakings) {
+        if (intermediateTakingsArrayList != null) {
+            for (CellPosition pos : intermediateTakingsArrayList) {
                 fullMove += displayCoordinates(pos) + "=>";
             }
         }
